@@ -1,5 +1,5 @@
 import React from "react";
-import { Search, Bell, Sparkles, Filter, ChevronRight } from "lucide-react";
+import { Search, Bell, Sparkles, Filter, ChevronRight, Camera, QrCode } from "lucide-react";
 import { TabType, NotificationItem } from "../types";
 
 interface TopHeaderProps {
@@ -9,6 +9,7 @@ interface TopHeaderProps {
   notifications: NotificationItem[];
   onOpenNotifications: () => void;
   onOpenProfile: () => void;
+  onOpenScanCamera: () => void;
   selectedEquipmentName?: string;
   onNavigateToTab: (tab: TabType) => void;
 }
@@ -20,6 +21,7 @@ export const TopHeader: React.FC<TopHeaderProps> = ({
   notifications,
   onOpenNotifications,
   onOpenProfile,
+  onOpenScanCamera,
   selectedEquipmentName,
   onNavigateToTab,
 }) => {
@@ -114,6 +116,17 @@ export const TopHeader: React.FC<TopHeaderProps> = ({
             </button>
           )}
         </div>
+
+        {/* Camera QR Scanner Quick Trigger */}
+        <button
+          id="header-scan-qr-btn"
+          onClick={onOpenScanCamera}
+          className="flex items-center gap-1.5 px-3 py-1.5 bg-[#006c49] hover:bg-[#005237] text-white rounded-lg text-xs font-semibold shadow-xs transition-all active:scale-95 shrink-0"
+          title="Scan Equipment QR Code"
+        >
+          <Camera className="w-3.5 h-3.5" />
+          <span>Scan</span>
+        </button>
 
         {/* AI Assistant Quick Pill */}
         <button

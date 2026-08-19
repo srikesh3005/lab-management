@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import {
   TabType,
   Equipment,
@@ -18,6 +18,7 @@ import { NavigationRail } from "./components/NavigationRail";
 import { TopHeader } from "./components/TopHeader";
 import { DashboardView } from "./components/DashboardView";
 import { EquipmentInventoryView } from "./components/EquipmentInventoryView";
+import { UtilizationView } from "./components/UtilizationView";
 import { EquipmentDetailView } from "./components/EquipmentDetailView";
 import { BudgetPlannerView } from "./components/BudgetPlannerView";
 import { DigitalPassportView } from "./components/DigitalPassportView";
@@ -36,6 +37,7 @@ import {
   ReportFaultModal,
   ProfileModal,
 } from "./components/Modals";
+import { CameraScannerModal } from "./components/CameraScannerModal";
 
 export function App() {
   const [currentTab, setCurrentTab] = useState<TabType>("dashboard");
@@ -59,6 +61,24 @@ export function App() {
   const [isAllocationModalOpen, setIsAllocationModalOpen] = useState(false);
   const [isFaultModalOpen, setIsFaultModalOpen] = useState(false);
   const [isProfileModalOpen, setIsProfileModalOpen] = useState(false);
+  const [isCameraScannerOpen, setIsCameraScannerOpen] = useState(false);
+
+  // Deep-link from QR Code scans (e.g. ?asset=EL-OSC-01)
+  useEffect(() => {
+    if (typeof window !== "undefined") {
+      const params = new URLSearchParams(window.location.search);
+      const assetId = params.get("asset");
+      if (assetId) {
+        const match = equipmentList.find(
+          (eq) => eq.id.toLowerCase() === assetId.toLowerCase()
+        );
+        if (match) {
+          setSelectedEquipment(match);
+          setCurrentTab("digital_passport");
+        }
+      }
+    }
+  }, [equipmentList]);
 
   // Active chat session
   const currentChatSession =
@@ -292,6 +312,7 @@ export function App() {
           notifications={notifications}
           onOpenNotifications={() => setIsNotificationsModalOpen(true)}
           onOpenProfile={() => setIsProfileModalOpen(true)}
+          onOpenScanCamera={() => setIsCameraScannerOpen(true)}
           selectedEquipmentName={selectedEquipment?.name}
           onNavigateToTab={(tab) => setCurrentTab(tab)}
         />
@@ -387,11 +408,10 @@ export function App() {
           )}
 
           {currentTab === "utilization" && (
-            <EquipmentInventoryView
+            <UtilizationView
               equipmentList={equipmentList}
               onSelectEquipment={handleSelectEquipment}
-              onOpenAddEquipment={() => setIsAddModalOpen(true)}
-              globalSearchQuery={globalSearchQuery}
+              onOpenReallocation={() => setIsAllocationModalOpen(true)}
             />
           )}
 
@@ -538,6 +558,17 @@ export function App() {
       <ProfileModal
         isOpen={isProfileModalOpen}
         onClose={() => setIsProfileModalOpen(false)}
+      />
+
+      <CameraScannerModal
+        isOpen={isCameraScannerOpen}
+        onClose={() => setIsCameraScannerOpen(false)}
+        equipmentList={equipmentList}
+        onScanSuccess={(scannedEq) => {
+          setSelectedEquipment(scannedEq);
+          setCurrentTab("digital_passport");
+          setIsCameraScannerOpen(false);
+        }}
       />
     </div>
   );
