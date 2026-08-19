@@ -1,0 +1,7 @@
+{
+  "name": "SmartLab",
+  "description": "Smart Lab Equipment Management System with condition monitoring, digital passports, AI insights, and budget planning",
+  "requestFramePermissions": ["camera"],
+  "majorCapabilities": ["MAJOR_CAPABILITY_SERVER_SIDE_GEMINI_API"]
+}
+
